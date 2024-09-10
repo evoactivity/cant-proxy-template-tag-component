@@ -1,10 +1,10 @@
+import './styles/app.css';
 import 'decorator-transforms/globals';
 import Application from '@ember/application';
 import compatModules from '@embroider/core/entrypoint';
 import Resolver from 'ember-resolver';
 import loadInitializers from 'ember-load-initializers';
 import config from './config/environment';
-import './styles/app.css';
 
 let d = window.define;
 

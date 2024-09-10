@@ -29,6 +29,7 @@ export default defineConfig(({ mode }) => {
       extensions,
     },
     plugins: [
+      hmr(),
       hbs(),
       templateTag(),
       scripts(),
@@ -36,7 +37,6 @@ export default defineConfig(({ mode }) => {
       compatPrebuild(),
       assets(),
       contentFor(),
-      hmr(),
 
       babel({
         babelHelpers: "runtime",

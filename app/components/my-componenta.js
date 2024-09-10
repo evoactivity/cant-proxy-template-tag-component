@@ -5,9 +5,13 @@ import { job, thing, that } from './styles.module.css';
 const concat = (...args) => args.join(' ');
 
 class MyComponent extends Component {
-  @tracked count = 0;
   classList = concat(job, thing, that);
+  @tracked count = 0;
   thing = 2;
+
+  get counter() {
+    return this.count + this.thing + ' hello';
+  }
 
   handleClick = () => {
     this.count += 1;
@@ -18,64 +22,49 @@ class MyComponent extends Component {
 let ___ProxyClass = MyComponent;
 
 if (import.meta.hot) {
-  // External state store to persist data across HMR
+  let componentInstance = null;
+  let stateKey = null;
+
   ___ProxyClass = new Proxy(MyComponent, {
     construct(target, args) {
-      const instance = new target(...args);
+      componentInstance = new target(...args);
 
-      if (Object.entries(instance.args.externalState.state).length === 0) {
-        instance.args.externalState.setState({
-          count: null,
-          thing: null,
-        });
-      }
+      stateKey = componentInstance.args.externalStateKey;
 
-      console.log('state container: ', instance.args.externalState.state);
-      // Override the original willDestroy method
-      const originalWillDestroy = instance.willDestroy.bind(instance);
-
-      instance.willDestroy = function () {
-        console.log('willDestroy in proxy');
-        // Sync the current state to the external store before the component is destroyed
-
-        console.log('saveState');
-        instance.args.externalState.setState({
-          count: instance.count,
-          thing: instance.thing,
-        });
-
-        console.log(instance.args.externalState);
-
-        // Call the original willDestroy method
-        originalWillDestroy();
+      window[stateKey] = window[stateKey] || {
+        count: componentInstance.count,
+        thing: componentInstance.thing,
       };
 
-      // Rehydrate the component state from the external store on hot reload
+      // Override the original willDestroy method
+      const originalWillDestroy =
+        componentInstance.willDestroy.bind(componentInstance);
 
-      // Rehydrate any saved state
-      import.meta.hot.on('vite:afterUpdate', () => {
-        console.log('rehydrate');
-        console.log('afterUpdate');
-        console.log(instance.args.externalState);
-        if (
-          instance.args.externalState.state.count !== null &&
-          typeof instance.args.externalState.state.count !== 'undefined'
-        ) {
-          console.log('count', instance.args.externalState.state.count);
-          instance.count = instance.args.externalState.state.count;
-        }
+      componentInstance.willDestroy = function () {
+        // Sync the current state to the external store before the component is destroyed
+        window[stateKey] = {
+          count: componentInstance.count,
+          thing: componentInstance.thing,
+        };
 
-        if (
-          instance.args.externalState.state.thing !== null &&
-          typeof instance.args.externalState.state.thing !== 'undefined'
-        ) {
-          console.log('thing', instance.args.externalState.state.thing);
-          instance.thing = instance.args.externalState.state.thing;
-        }
-      });
+        originalWillDestroy(...arguments);
+      };
 
-      return instance;
+      return componentInstance;
     },
+  });
+
+  const rehydrate = () => {
+    componentInstance.count = window[stateKey].count;
+    componentInstance.thing = window[stateKey].thing;
+  };
+
+  // Rehydrate the component state from the external store on hot reload
+  import.meta.hot.on('vite:afterUpdate', rehydrate);
+
+  import.meta.hot.dispose(() => {
+    delete window[stateKey];
+    import.meta.hot.off('vite:afterUpdate', rehydrate);
   });
 }
 
