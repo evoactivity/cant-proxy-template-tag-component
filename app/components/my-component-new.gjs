@@ -1,6 +1,7 @@
 import Component from '@glimmer/component';
 import { tracked } from '@glimmer/tracking';
 import { block } from './styles.module.css';
+import { on } from '@ember/modifier';
 
 export default class MyComponent extends Component {
   @tracked count = 0;
@@ -17,7 +18,7 @@ export default class MyComponent extends Component {
 
   <template>
     <div class={{block}}>
-      <h1>Test</h1>
+      <h1>Test Component</h1>
       <p>{{this.counter}}</p>
       <button type="button" {{on "click" this.handleClick}}>Click me</button>
     </div>
