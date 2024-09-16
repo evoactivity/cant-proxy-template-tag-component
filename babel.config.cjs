@@ -1,3 +1,5 @@
+const { hotAstProcessor } = require("ember-vite-hmr/lib/babel-plugin");
+
 let config;
 
 // TODO - remove this once we have the better solution for injecting stage1 babel config into a real config file
@@ -13,5 +15,8 @@ if (
 } else {
   config = require("./node_modules/.embroider/_babel_config_");
 }
+
+config.plugins.push(["ember-vite-hmr/lib/babel-plugin"]);
+config.transforms.push(hotAstProcessor.transform);
 
 module.exports = config;

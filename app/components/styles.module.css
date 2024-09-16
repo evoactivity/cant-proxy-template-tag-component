@@ -1,13 +1,21 @@
-.job {
+.block {
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   font-size: 24px;
-  background: #00f;
-}
+  background: lightgray;
+  color: black;
+  margin-bottom: 20px;
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid black;
 
-.thing {
-  color: white;
-}
+  button {
+    background: red;
+    border: black;
+    border-radius: 8px;
+    padding: 1rem 2rem;
 
-.that {
-  font-style: regular;
+    &:hover {
+      cursor: pointer;
+    }
+  }
 }
