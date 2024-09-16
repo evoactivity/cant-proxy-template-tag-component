@@ -18,7 +18,7 @@ export default class MyComponent extends Component {
 
   <template>
     <div class={{block}}>
-      <h1>Test GJS Component</h1>
+      <h1>Test GJS</h1>
       <p>{{this.counter}}</p>
       <button type="button" {{on "click" this.handleClick}}>Click me</button>
     </div>

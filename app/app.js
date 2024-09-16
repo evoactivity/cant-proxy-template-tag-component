@@ -1,4 +1,5 @@
 import './styles/app.css';
+import { curry } from '@glimmer/runtime';
 import 'decorator-transforms/globals';
 import Application from '@ember/application';
 import compatModules from '@embroider/core/entrypoint';
